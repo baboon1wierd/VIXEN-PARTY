@@ -1,0 +1,3 @@
+<?php
+// Minimal content
+?>
