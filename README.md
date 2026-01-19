@@ -1,4 +1,3 @@
-# VIXEN-PARTY
 # Kenya Trust & Alert Hub 🇰🇪
 
 A community-powered platform for **Lost & Found**, **Scam Alerts**, and **Consumer Protection** in Kenya.
@@ -67,3 +66,143 @@ kenya-trust-hub/
 ├── .env               # Environment variables
 ├── .htaccess          # Routing & security rules
 └── README.md
+
+
+---
+
+⚙️ Installation
+
+1. Clone the repository
+
+git clone https://github.com/your-org/kenya-trust-hub.git
+cd kenya-trust-hub
+
+2. Configure environment
+
+Create a .env file:
+
+APP_NAME="Kenya Trust & Alert Hub"
+APP_ENV=local
+DB_HOST=localhost
+DB_NAME=trusthub
+DB_USER=root
+DB_PASS=
+
+3. Set permissions
+
+chmod -R 755 storage/
+
+4. Serve the app
+
+Point your web server root to:
+
+/public
+
+
+---
+
+🔐 Security & Legal
+
+All reports are user-generated
+
+Listings are marked “Reported” until reviewed
+
+Evidence uploads are isolated and logged
+
+Sensitive data should be blurred or redacted
+
+Rate limiting recommended for reports
+
+
+Legal Disclaimer (Required):
+
+> This platform does not make legal accusations.
+All content is user-reported and provided for public awareness only.
+
+
+
+
+---
+
+🛠 Admin Panel
+
+Admins can:
+
+Review and moderate reports
+
+Verify high-risk listings
+
+Manage users
+
+Escalate confirmed scams
+
+Remove abusive or false reports
+
+
+Admin routes are located in /admin.
+
+
+---
+
+🧭 Roadmap
+
+[ ] MySQL schema & migrations
+
+[ ] Admin verification workflows
+
+[ ] Reputation & trust scoring
+
+[ ] SMS / WhatsApp alerts
+
+[ ] Map-based listings
+
+[ ] PWA support
+
+[ ] API access for partners
+
+
+
+---
+
+🤝 Contributing
+
+Contributions are welcome.
+
+Fork the repo
+
+Create a feature branch
+
+Submit a pull request
+
+
+Focus areas:
+
+Security
+
+Moderation tooling
+
+Performance
+
+Accessibility
+
+
+
+---
+
+📩 Contact
+
+For partnerships, reports, or support:
+
+📧 support@trusthub.ke
+🌍 Built for Kenya
+
+
+---
+
+📄 License
+
+MIT License
+© 2026 — Kenya Trust & Alert Hub
+
+MUCHO GRACIAS AMIGO
+
