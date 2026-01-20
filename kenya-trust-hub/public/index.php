@@ -9,7 +9,7 @@
       A community-powered platform for lost & found, scam alerts, and consumer protection.
     </p>
     <div class="flex justify-center gap-4">
-      <button class="bg-black text-white px-6 py-3 rounded-xl">Search Listings</button>
+      <a href="/listings.php" class="bg-black text-white px-6 py-3 rounded-xl inline-block">Search Listings</a>
       <a href="/listings.php#report-form" class="border border-black px-6 py-3 rounded-xl inline-block">Report Incident</a>
     </div>
   </section>

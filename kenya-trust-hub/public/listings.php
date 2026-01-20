@@ -38,14 +38,30 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS post_votes (
   <div class="max-w-6xl mx-auto px-6">
     <h1 class="text-4xl font-bold text-center mb-12 text-gray-800">Community Listings</h1>
 
+    <!-- Search Bar -->
+    <div class="mb-8 text-center">
+      <form method="get" class="inline-block">
+        <input type="text" name="q" placeholder="Search listings..." value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>" class="px-4 py-2 border rounded-l-lg w-64">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700">Search</button>
+      </form>
+    </div>
+
     <!-- Lost & Found -->
     <div class="mb-12">
       <h2 class="text-3xl font-semibold mb-6 text-blue-600">Lost & Found</h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <?php
         include '../app/config/database.php';
-        $stmt = $pdo->prepare("SELECT * FROM listings WHERE type = 'lost_found' ORDER BY id DESC");
-        $stmt->execute();
+        $query = "SELECT * FROM listings WHERE type = 'lost_found'";
+        $params = [];
+        if (!empty($_GET['q'])) {
+          $search = '%' . $_GET['q'] . '%';
+          $query .= " AND (title LIKE ? OR description LIKE ? OR location LIKE ?)";
+          $params = [$search, $search, $search];
+        }
+        $query .= " ORDER BY id DESC";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
         $listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($listings)) {
           // Dummy posts
@@ -98,8 +114,16 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS post_votes (
       <h2 class="text-3xl font-semibold mb-6 text-green-600">Consumer Protection Reports</h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <?php
-        $stmt = $pdo->prepare("SELECT * FROM listings WHERE type = 'consumer' ORDER BY id DESC");
-        $stmt->execute();
+        $query = "SELECT * FROM listings WHERE type = 'consumer'";
+        $params = [];
+        if (!empty($_GET['q'])) {
+          $search = '%' . $_GET['q'] . '%';
+          $query .= " AND (title LIKE ? OR description LIKE ? OR location LIKE ?)";
+          $params = [$search, $search, $search];
+        }
+        $query .= " ORDER BY id DESC";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
         $listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($listings)) {
           $dummyListings = [
@@ -152,8 +176,16 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS post_votes (
       <h2 class="text-3xl font-semibold mb-6 text-red-600">Scam Alerts</h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <?php
-        $stmt = $pdo->prepare("SELECT * FROM listings WHERE type = 'scam' ORDER BY id DESC");
-        $stmt->execute();
+        $query = "SELECT * FROM listings WHERE type = 'scam'";
+        $params = [];
+        if (!empty($_GET['q'])) {
+          $search = '%' . $_GET['q'] . '%';
+          $query .= " AND (title LIKE ? OR description LIKE ? OR location LIKE ?)";
+          $params = [$search, $search, $search];
+        }
+        $query .= " ORDER BY id DESC";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
         $listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($listings)) {
           $dummyListings = [
