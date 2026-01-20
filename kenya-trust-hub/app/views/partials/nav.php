@@ -4,7 +4,6 @@
   <div class="nav-left">
     <a href="/index.php"><strong>TrustHub KE</strong></a>
 
-    <a href="/search.php">Search</a>
     <a href="/listings.php">Listings</a>
 
     <a href="/listings.php#report-form">
@@ -13,6 +12,14 @@
     </a>
 
     <a href="/newsletter.php">Newsletter</a>
+  </div>
+
+  <!-- CENTER - SEARCH BAR -->
+  <div class="nav-center">
+    <form action="/search.php" method="get" class="search-form">
+      <input type="text" name="q" placeholder="Search listings, scams, lost items..." autocomplete="off">
+      <button type="submit">🔍</button>
+    </form>
   </div>
 
   <!-- RIGHT SIDE -->
