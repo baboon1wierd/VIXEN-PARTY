@@ -1,4 +1,38 @@
-<?php include '../app/views/partials/header.php'; ?>
+<?php
+include '../app/views/partials/header.php';
+include '../app/config/database.php';
+
+// Create tables if not exist
+$pdo->exec("CREATE TABLE IF NOT EXISTS listings (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER,
+  type TEXT,
+  title TEXT,
+  description TEXT,
+  location TEXT,
+  price REAL,
+  status TEXT DEFAULT 'reported',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)");
+
+$pdo->exec("CREATE TABLE IF NOT EXISTS evidence (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  listing_id INTEGER,
+  file_path TEXT,
+  FOREIGN KEY (listing_id) REFERENCES listings(id)
+)");
+
+$pdo->exec("CREATE TABLE IF NOT EXISTS post_votes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  post_id INTEGER,
+  vote_type TEXT,
+  anon_hash TEXT,
+  ip_hash TEXT,
+  ua_hash TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (post_id) REFERENCES listings(id)
+)");
+?>
 
 <section class="py-16 bg-gray-50">
   <div class="max-w-6xl mx-auto px-6">
@@ -320,39 +354,7 @@ function share(platform, title) {
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
-  include '../app/config/database.php';
   if (session_status() === PHP_SESSION_NONE) session_start();
-
-  // Create table if not exists
-  $pdo->exec("CREATE TABLE IF NOT EXISTS listings (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    type TEXT,
-    title TEXT,
-    description TEXT,
-    location TEXT,
-    price REAL,
-    status TEXT DEFAULT 'reported',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )");
-
-  $pdo->exec("CREATE TABLE IF NOT EXISTS evidence (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    listing_id INTEGER,
-    file_path TEXT,
-    FOREIGN KEY (listing_id) REFERENCES listings(id)
-  )");
-
-  $pdo->exec("CREATE TABLE IF NOT EXISTS post_votes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    post_id INTEGER,
-    vote_type TEXT,
-    anon_hash TEXT,
-    ip_hash TEXT,
-    ua_hash TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (post_id) REFERENCES listings(id)
-  )");
 
   $user_id = $_SESSION['user']['id'] ?? null;
   $type = $_POST['type'];
