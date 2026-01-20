@@ -8,24 +8,40 @@
     <div class="mb-12">
       <h2 class="text-3xl font-semibold mb-6 text-blue-600">Lost & Found</h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow-lg">
-          <h3 class="text-xl font-semibold mb-2">Lost iPhone 12</h3>
-          <p class="text-gray-600 mb-2">Black iPhone 12 lost in Westlands, Nairobi. Reward offered.</p>
-          <p class="text-sm text-gray-500">Location: Westlands, Nairobi</p>
-          <p class="text-sm text-green-600 mt-2">Status: Lost</p>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-lg">
-          <h3 class="text-xl font-semibold mb-2">Found Wallet</h3>
-          <p class="text-gray-600 mb-2">Brown leather wallet found containing ID and cash. Owner please contact.</p>
-          <p class="text-sm text-gray-500">Location: CBD, Nairobi</p>
-          <p class="text-sm text-blue-600 mt-2">Status: Found</p>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-lg">
-          <h3 class="text-xl font-semibold mb-2">Lost Laptop</h3>
-          <p class="text-gray-600 mb-2">Silver MacBook Pro lost at University of Nairobi. Contains important files.</p>
-          <p class="text-sm text-gray-500">Location: University of Nairobi</p>
-          <p class="text-sm text-green-600 mt-2">Status: Lost</p>
-        </div>
+        <?php
+        include '../app/config/database.php';
+        $stmt = $pdo->prepare("SELECT * FROM listings WHERE type = 'lost_found' ORDER BY id DESC");
+        $stmt->execute();
+        $listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($listings)) {
+          echo '<p class="text-gray-600">No listings yet. Be the first to submit!</p>';
+        } else {
+          foreach ($listings as $listing) {
+            echo '<div class="bg-white p-4 rounded-lg shadow-lg mb-4 flex">';
+            echo '<div class="flex flex-col items-center mr-4">';
+            echo '<button class="upvote-btn text-gray-400 hover:text-orange-500 text-lg" onclick="vote(this, 1)">▲</button>';
+            echo '<span class="vote-count text-sm font-bold">0</span>';
+            echo '<button class="downvote-btn text-gray-400 hover:text-blue-500 text-lg" onclick="vote(this, -1)">▼</button>';
+            echo '</div>';
+            echo '<div class="flex-1">';
+            echo '<img src="https://via.placeholder.com/100x60?text=Img" alt="Evidence" class="float-right ml-4 mb-2 w-24 h-16 object-cover rounded">';
+            echo '<h3 class="text-lg font-semibold mb-1">' . htmlspecialchars($listing['title']) . '</h3>';
+            echo '<p class="text-gray-600 text-sm mb-2">' . htmlspecialchars(substr($listing['description'], 0, 150)) . '...</p>';
+            echo '<p class="text-xs text-gray-500 mb-1">Location: ' . htmlspecialchars($listing['location']) . ' | Status: ' . htmlspecialchars($listing['status']) . '</p>';
+            echo '<div class="flex items-center space-x-4 text-xs text-gray-500">';
+            echo '<span>Views: <span class="view-count">42</span></span>';
+            echo '<button class="donate-btn text-blue-500 hover:underline" onclick="window.location.href=\'donations.php\'">Donate</button>';
+            echo '<div class="flex space-x-1">';
+            echo '<button class="social-btn text-blue-600" onclick="share(\'facebook\', \'' . htmlspecialchars($listing['title']) . '\')">FB</button>';
+            echo '<button class="social-btn text-blue-400" onclick="share(\'twitter\', \'' . htmlspecialchars($listing['title']) . '\')">TW</button>';
+            echo '<button class="social-btn text-green-500" onclick="share(\'whatsapp\', \'' . htmlspecialchars($listing['title']) . '\')">WA</button>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+          }
+        }
+        ?>
       </div>
     </div>
 
@@ -33,24 +49,39 @@
     <div class="mb-12">
       <h2 class="text-3xl font-semibold mb-6 text-green-600">Consumer Protection Reports</h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow-lg">
-          <h3 class="text-xl font-semibold mb-2">Fake Electronics Shop</h3>
-          <p class="text-gray-600 mb-2">Shop in River Road selling counterfeit phones. Multiple complaints of faulty products.</p>
-          <p class="text-sm text-gray-500">Location: River Road, Nairobi</p>
-          <p class="text-sm text-red-600 mt-2">Risk: High</p>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-lg">
-          <h3 class="text-xl font-semibold mb-2">Overpriced Groceries</h3>
-          <p class="text-gray-600 mb-2">Supermarket charging 3x normal prices for basic items. Avoid this location.</p>
-          <p class="text-sm text-gray-500">Location: Eastlands, Nairobi</p>
-          <p class="text-sm text-orange-600 mt-2">Risk: Medium</p>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-lg">
-          <h3 class="text-xl font-semibold mb-2">Excellent Service - QuickMart</h3>
-          <p class="text-gray-600 mb-2">Great customer service and fair prices. Highly recommended for daily shopping.</p>
-          <p class="text-sm text-gray-500">Location: Karen, Nairobi</p>
-          <p class="text-sm text-green-600 mt-2">Rating: Excellent</p>
-        </div>
+        <?php
+        $stmt = $pdo->prepare("SELECT * FROM listings WHERE type = 'consumer' ORDER BY id DESC");
+        $stmt->execute();
+        $listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($listings)) {
+          echo '<p class="text-gray-600">No reports yet. Be the first to report!</p>';
+        } else {
+          foreach ($listings as $listing) {
+            echo '<div class="bg-white p-4 rounded-lg shadow-lg mb-4 flex">';
+            echo '<div class="flex flex-col items-center mr-4">';
+            echo '<button class="upvote-btn text-gray-400 hover:text-orange-500 text-lg" onclick="vote(this, 1)">▲</button>';
+            echo '<span class="vote-count text-sm font-bold">0</span>';
+            echo '<button class="downvote-btn text-gray-400 hover:text-blue-500 text-lg" onclick="vote(this, -1)">▼</button>';
+            echo '</div>';
+            echo '<div class="flex-1">';
+            echo '<img src="https://via.placeholder.com/100x60?text=Img" alt="Evidence" class="float-right ml-4 mb-2 w-24 h-16 object-cover rounded">';
+            echo '<h3 class="text-lg font-semibold mb-1">' . htmlspecialchars($listing['title']) . '</h3>';
+            echo '<p class="text-gray-600 text-sm mb-2">' . htmlspecialchars(substr($listing['description'], 0, 150)) . '...</p>';
+            echo '<p class="text-xs text-gray-500 mb-1">Location: ' . htmlspecialchars($listing['location']) . ' | Status: ' . htmlspecialchars($listing['status']) . '</p>';
+            echo '<div class="flex items-center space-x-4 text-xs text-gray-500">';
+            echo '<span>Views: <span class="view-count">67</span></span>';
+            echo '<button class="donate-btn text-blue-500 hover:underline" onclick="window.location.href=\'donations.php\'">Donate</button>';
+            echo '<div class="flex space-x-1">';
+            echo '<button class="social-btn text-blue-600" onclick="share(\'facebook\', \'' . htmlspecialchars($listing['title']) . '\')">FB</button>';
+            echo '<button class="social-btn text-blue-400" onclick="share(\'twitter\', \'' . htmlspecialchars($listing['title']) . '\')">TW</button>';
+            echo '<button class="social-btn text-green-500" onclick="share(\'whatsapp\', \'' . htmlspecialchars($listing['title']) . '\')">WA</button>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+          }
+        }
+        ?>
       </div>
     </div>
 
@@ -58,24 +89,39 @@
     <div class="mb-12">
       <h2 class="text-3xl font-semibold mb-6 text-red-600">Scam Alerts</h2>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-red-500">
-          <h3 class="text-xl font-semibold mb-2">Job Scam - Fake Employment Agency</h3>
-          <p class="text-gray-600 mb-2">Agency promising high-paying jobs but requiring upfront fees. Multiple victims reported.</p>
-          <p class="text-sm text-gray-500">Location: Online/Email</p>
-          <p class="text-sm text-red-600 mt-2">Scam Type: Employment</p>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-red-500">
-          <h3 class="text-xl font-semibold mb-2">Landlord Scam</h3>
-          <p class="text-gray-600 mb-2">Fake landlord advertising non-existent apartments and collecting deposits.</p>
-          <p class="text-sm text-gray-500">Location: Westlands, Nairobi</p>
-          <p class="text-sm text-red-600 mt-2">Scam Type: Rental</p>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-red-500">
-          <h3 class="text-xl font-semibold mb-2">Online Shopping Fraud</h3>
-          <p class="text-gray-600 mb-2">Website selling electronics but never delivering. Refunds not processed.</p>
-          <p class="text-sm text-gray-500">Location: Online</p>
-          <p class="text-sm text-red-600 mt-2">Scam Type: E-commerce</p>
-        </div>
+        <?php
+        $stmt = $pdo->prepare("SELECT * FROM listings WHERE type = 'scam' ORDER BY id DESC");
+        $stmt->execute();
+        $listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($listings)) {
+          echo '<p class="text-gray-600">No alerts yet. Be the first to report a scam!</p>';
+        } else {
+          foreach ($listings as $listing) {
+            echo '<div class="bg-white p-4 rounded-lg shadow-lg mb-4 flex border-l-4 border-red-500">';
+            echo '<div class="flex flex-col items-center mr-4">';
+            echo '<button class="upvote-btn text-gray-400 hover:text-orange-500 text-lg" onclick="vote(this, 1)">▲</button>';
+            echo '<span class="vote-count text-sm font-bold">0</span>';
+            echo '<button class="downvote-btn text-gray-400 hover:text-blue-500 text-lg" onclick="vote(this, -1)">▼</button>';
+            echo '</div>';
+            echo '<div class="flex-1">';
+            echo '<img src="https://via.placeholder.com/100x60?text=Img" alt="Evidence" class="float-right ml-4 mb-2 w-24 h-16 object-cover rounded">';
+            echo '<h3 class="text-lg font-semibold mb-1">' . htmlspecialchars($listing['title']) . '</h3>';
+            echo '<p class="text-gray-600 text-sm mb-2">' . htmlspecialchars(substr($listing['description'], 0, 150)) . '...</p>';
+            echo '<p class="text-xs text-gray-500 mb-1">Location: ' . htmlspecialchars($listing['location']) . ' | Status: ' . htmlspecialchars($listing['status']) . '</p>';
+            echo '<div class="flex items-center space-x-4 text-xs text-gray-500">';
+            echo '<span>Views: <span class="view-count">123</span></span>';
+            echo '<button class="donate-btn text-blue-500 hover:underline" onclick="window.location.href=\'donations.php\'">Donate</button>';
+            echo '<div class="flex space-x-1">';
+            echo '<button class="social-btn text-blue-600" onclick="share(\'facebook\', \'' . htmlspecialchars($listing['title']) . '\')">FB</button>';
+            echo '<button class="social-btn text-blue-400" onclick="share(\'twitter\', \'' . htmlspecialchars($listing['title']) . '\')">TW</button>';
+            echo '<button class="social-btn text-green-500" onclick="share(\'whatsapp\', \'' . htmlspecialchars($listing['title']) . '\')">WA</button>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>';
+          }
+        }
+        ?>
       </div>
     </div>
 
@@ -176,6 +222,32 @@
 </section>
 
 <script>
+function vote(button, delta) {
+  const countSpan = button.querySelector('.vote-count');
+  let count = parseInt(countSpan.textContent);
+  count += delta;
+  countSpan.textContent = count;
+  button.disabled = true; // Prevent multiple votes
+}
+
+function share(platform, title) {
+  const url = window.location.href;
+  let shareUrl = '';
+  switch(platform) {
+    case 'facebook':
+      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+      break;
+    case 'twitter':
+      shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
+      break;
+    case 'whatsapp':
+      shareUrl = `https://wa.me/?text=${encodeURIComponent(title + ' ' + url)}`;
+      break;
+  }
+  window.open(shareUrl, '_blank');
+}
+
+
   document.getElementById('report-type').addEventListener('change', function() {
     const type = this.value;
     document.getElementById('lost-found-fields').classList.toggle('hidden', type !== 'lost_found');
@@ -189,6 +261,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
   include '../app/config/database.php';
   if (session_status() === PHP_SESSION_NONE) session_start();
 
+  // Create table if not exists
+  $pdo->exec("CREATE TABLE IF NOT EXISTS listings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    type TEXT,
+    title TEXT,
+    description TEXT,
+    location TEXT,
+    price REAL,
+    status TEXT DEFAULT 'reported',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )");
+
+  $pdo->exec("CREATE TABLE IF NOT EXISTS evidence (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    listing_id INTEGER,
+    file_path TEXT,
+    FOREIGN KEY (listing_id) REFERENCES listings(id)
+  )");
+
   $user_id = $_SESSION['user']['id'] ?? null;
   $type = $_POST['type'];
   $title = $_POST['item_name'] ?? $_POST['brand_name'] ?? 'Report';
@@ -201,10 +293,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
   $listing_id = $pdo->lastInsertId();
 
   // Handle file uploads
+  $evidenceDir = "../storage/evidence/";
+  if (!is_dir($evidenceDir)) {
+    mkdir($evidenceDir, 0755, true);
+  }
+
   if (!empty($_FILES['images']['name'][0])) {
     foreach ($_FILES['images']['tmp_name'] as $key => $tmp_name) {
       if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
-        $path = "../storage/evidence/" . uniqid() . ".jpg";
+        $path = $evidenceDir . uniqid() . ".jpg";
         move_uploaded_file($tmp_name, $path);
         $pdo->prepare("INSERT INTO evidence (listing_id, file_path) VALUES (?, ?)")->execute([$listing_id, $path]);
       }
@@ -212,12 +309,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
   }
 
   if (!empty($_FILES['screenshot']['name'])) {
-    $path = "../storage/evidence/" . uniqid() . ".jpg";
+    $path = $evidenceDir . uniqid() . ".jpg";
     move_uploaded_file($_FILES['screenshot']['tmp_name'], $path);
     $pdo->prepare("INSERT INTO evidence (listing_id, file_path) VALUES (?, ?)")->execute([$listing_id, $path]);
   }
 
-  echo "<script>alert('Report submitted successfully!');</script>";
+  header('Location: listings.php');
+  exit;
 }
 ?>
 
