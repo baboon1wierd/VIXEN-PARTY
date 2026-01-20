@@ -7,74 +7,70 @@ class SearchModel {
     public function __construct() {
         global $pdo;
         $this->pdo = $pdo;
+        $this->createTable();
     }
 
-    public function searchListings($query, $filters = []) {
-        $sql = "SELECT l.*, u.name as user_name FROM listings l
-                LEFT JOIN users u ON l.user_id = u.id
-                WHERE l.status = 'verified'";
+    private function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS listings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            description TEXT,
+            type TEXT,
+            location TEXT,
+            price REAL,
+            user_id INTEGER,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )";
+        $this->pdo->exec($sql);
+    }
 
+    public function searchListings($query, $filters) {
+        $sql = "SELECT * FROM listings WHERE 1=1";
         $params = [];
-        $conditions = [];
 
-        // Text search
         if (!empty($query)) {
-            $conditions[] = "(l.title LIKE ? OR l.description LIKE ? OR l.location LIKE ?)";
-            $searchTerm = '%' . $query . '%';
-            $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
+            $sql .= " AND (title LIKE ? OR description LIKE ?)";
+            $params[] = "%$query%";
+            $params[] = "%$query%";
         }
 
-        // Category/Type filter
         if (!empty($filters['type'])) {
-            $conditions[] = "l.type = ?";
+            $sql .= " AND type = ?";
             $params[] = $filters['type'];
         }
 
-        // Location filter
         if (!empty($filters['location'])) {
-            $conditions[] = "l.location LIKE ?";
-            $params[] = '%' . $filters['location'] . '%';
+            $sql .= " AND location LIKE ?";
+            $params[] = "%" . $filters['location'] . "%";
         }
 
-        // Price range filter
         if (!empty($filters['min_price'])) {
-            $conditions[] = "l.price >= ?";
+            $sql .= " AND price >= ?";
             $params[] = $filters['min_price'];
         }
+
         if (!empty($filters['max_price'])) {
-            $conditions[] = "l.price <= ?";
+            $sql .= " AND price <= ?";
             $params[] = $filters['max_price'];
         }
 
-        // Date range filter
         if (!empty($filters['date_from'])) {
-            $conditions[] = "l.created_at >= ?";
+            $sql .= " AND created_at >= ?";
             $params[] = $filters['date_from'];
         }
+
         if (!empty($filters['date_to'])) {
-            $conditions[] = "l.created_at <= ?";
+            $sql .= " AND created_at <= ?";
             $params[] = $filters['date_to'];
         }
 
-        if (!empty($conditions)) {
-            $sql .= " AND " . implode(" AND ", $conditions);
-        }
+        $sort = $filters['sort'] ?? 'created_at';
+        $order = strtoupper($filters['order'] ?? 'DESC');
+        $sql .= " ORDER BY $sort $order";
 
-        // Sorting
-        $sortBy = $filters['sort'] ?? 'created_at';
-        $sortOrder = $filters['order'] ?? 'DESC';
-        $allowedSorts = ['created_at', 'title', 'price', 'location'];
-        $allowedOrders = ['ASC', 'DESC'];
-
-        if (in_array($sortBy, $allowedSorts) && in_array($sortOrder, $allowedOrders)) {
-            $sql .= " ORDER BY l.$sortBy $sortOrder";
-        } else {
-            $sql .= " ORDER BY l.created_at DESC";
-        }
-
-        // Pagination
-        $limit = (int)($filters['limit'] ?? 20);
-        $offset = (int)($filters['offset'] ?? 0);
+        $limit = $filters['limit'] ?? 20;
+        $offset = $filters['offset'] ?? 0;
         $sql .= " LIMIT ? OFFSET ?";
         $params[] = $limit;
         $params[] = $offset;
@@ -84,74 +80,48 @@ class SearchModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getSearchSuggestions($query) {
-        if (empty($query) || strlen($query) < 2) {
-            return [];
-        }
-
-        $stmt = $this->pdo->prepare("
-            SELECT DISTINCT title as suggestion, 'title' as type FROM listings
-            WHERE title LIKE ? AND status = 'verified'
-            UNION
-            SELECT DISTINCT location as suggestion, 'location' as type FROM listings
-            WHERE location LIKE ? AND status = 'verified' AND location != ''
-            LIMIT 10
-        ");
-        $searchTerm = $query . '%';
-        $stmt->execute([$searchTerm, $searchTerm]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getPopularSearches() {
-        // This could be implemented with a search_logs table
-        // For now, return some default popular searches
-        return [
-            'lost phone',
-            'stolen car',
-            'fake products',
-            'rental scam',
-            'job fraud'
-        ];
-    }
-
     public function getFilterOptions() {
-        $types = $this->pdo->query("SELECT DISTINCT type FROM listings WHERE status = 'verified' ORDER BY type")->fetchAll(PDO::FETCH_COLUMN);
-        $locations = $this->pdo->query("SELECT DISTINCT location FROM listings WHERE status = 'verified' AND location != '' ORDER BY location LIMIT 50")->fetchAll(PDO::FETCH_COLUMN);
-
+        $types = $this->pdo->query("SELECT DISTINCT type FROM listings WHERE type IS NOT NULL ORDER BY type")->fetchAll(PDO::FETCH_COLUMN);
+        $locations = $this->pdo->query("SELECT DISTINCT location FROM listings WHERE location IS NOT NULL ORDER BY location")->fetchAll(PDO::FETCH_COLUMN);
         return [
             'types' => $types,
             'locations' => $locations
         ];
     }
 
-    public function generateRSS() {
-        $listings = $this->searchListings('', ['limit' => 50]);
+    public function getPopularSearches() {
+        // Placeholder: return some popular searches
+        return ['electronics', 'cars', 'houses', 'jobs'];
+    }
 
-        $rss = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $rss .= '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">' . "\n";
-        $rss .= '<channel>' . "\n";
-        $rss .= '<title>Kenya Trust Hub - Latest Listings</title>' . "\n";
-        $rss .= '<description>Stay updated with the latest consumer protection listings and reports from Kenya Trust Hub</description>' . "\n";
-        $rss .= '<link>' . APP_URL . '</link>' . "\n";
-        $rss .= '<atom:link href="' . APP_URL . '/search.php?rss=1" rel="self" type="application/rss+xml" />' . "\n";
-        $rss .= '<language>en-us</language>' . "\n";
-        $rss .= '<lastBuildDate>' . date('r') . '</lastBuildDate>' . "\n";
+    public function getSearchSuggestions($query) {
+        if (empty($query)) return [];
+
+        $stmt = $this->pdo->prepare("SELECT title FROM listings WHERE title LIKE ? LIMIT 10");
+        $stmt->execute(["%$query%"]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    public function generateRSS() {
+        $listings = $this->pdo->query("SELECT * FROM listings ORDER BY created_at DESC LIMIT 20")->fetchAll(PDO::FETCH_ASSOC);
+
+        $rss = '<?xml version="1.0" encoding="UTF-8"?>';
+        $rss .= '<rss version="2.0">';
+        $rss .= '<channel>';
+        $rss .= '<title>Kenya Trust Hub Listings</title>';
+        $rss .= '<description>Latest listings from Kenya Trust Hub</description>';
+        $rss .= '<link>' . APP_URL . '</link>';
 
         foreach ($listings as $listing) {
-            $rss .= '<item>' . "\n";
-            $rss .= '<title>' . htmlspecialchars($listing['title']) . '</title>' . "\n";
-            $rss .= '<description>' . htmlspecialchars(substr($listing['description'], 0, 200) . '...') . '</description>' . "\n";
-            $rss .= '<link>' . APP_URL . '/listing.php?id=' . $listing['id'] . '</link>' . "\n";
-            $rss .= '<guid>' . APP_URL . '/listing.php?id=' . $listing['id'] . '</guid>' . "\n";
-            $rss .= '<pubDate>' . date('r', strtotime($listing['created_at'])) . '</pubDate>' . "\n";
-            $rss .= '<category>' . htmlspecialchars($listing['type']) . '</category>' . "\n";
-            if (!empty($listing['location'])) {
-                $rss .= '<category>' . htmlspecialchars($listing['location']) . '</category>' . "\n";
-            }
-            $rss .= '</item>' . "\n";
+            $rss .= '<item>';
+            $rss .= '<title>' . htmlspecialchars($listing['title']) . '</title>';
+            $rss .= '<description>' . htmlspecialchars($listing['description']) . '</description>';
+            $rss .= '<link>' . APP_URL . '/listing.php?id=' . $listing['id'] . '</link>';
+            $rss .= '<pubDate>' . date('r', strtotime($listing['created_at'])) . '</pubDate>';
+            $rss .= '</item>';
         }
 
-        $rss .= '</channel>' . "\n";
+        $rss .= '</channel>';
         $rss .= '</rss>';
 
         return $rss;
