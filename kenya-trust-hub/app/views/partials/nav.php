@@ -12,6 +12,7 @@
     </a>
 
     <a href="/newsletter.php">Newsletter</a>
+     <a href="/donations.php">Donate</a>
   </div>
 
   <!-- CENTER - SEARCH BAR -->

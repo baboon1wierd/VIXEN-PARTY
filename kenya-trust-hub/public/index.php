@@ -82,6 +82,19 @@
     </div>
   </section>
 
+  <!-- Donations CTA -->
+  <section class="py-16 bg-gradient-to-r from-green-100 to-blue-100">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <h2 class="text-4xl font-bold mb-4 text-gray-800">Support Our Mission</h2>
+      <p class="text-xl text-gray-600 mb-8">
+        Help us keep Kenya Trust Hub running and expanding. Your donations fund our servers, team, and research to protect more Kenyans.
+      </p>
+      <a href="/donations.php" class="bg-green-600 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-green-700 shadow-lg inline-block">
+        Donate Now
+      </a>
+    </div>
+  </section>
+
   <!-- Newsletter -->
   <section class="bg-gradient-to-r from-red-600 to-pink-600 text-white py-16">
     <div class="max-w-4xl mx-auto px-6 text-center">

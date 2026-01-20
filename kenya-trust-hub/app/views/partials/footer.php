@@ -21,6 +21,7 @@
           <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
           <li><a href="/contact.php" class="text-gray-400 hover:text-white">Contact Us</a></li>
           <li><a href="#" class="text-gray-400 hover:text-white">Report Issue</a></li>
+          <li><a href="/donations.php" class="text-yellow-400 hover:text-yellow-300 font-semibold">Donate</a></li>
         </ul>
       </div>
       <div>
