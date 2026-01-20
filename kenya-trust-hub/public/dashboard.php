@@ -6,7 +6,7 @@
 
   <li><a href="listings.php#report-form">New Report</a></li>
 
-  <li><a href="../app/views/dashboard/my-reports.php">My Reports</a></li>
+  <li><a href="/my-reports.php">My Reports</a></li>
 
 </ul>
 
