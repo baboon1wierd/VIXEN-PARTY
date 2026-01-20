@@ -19,16 +19,16 @@
         <h4 class="font-semibold mb-4">Support</h4>
         <ul class="space-y-2">
           <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
-          <li><a href="/app/views/static/contact.php" class="text-gray-400 hover:text-white">Contact Us</a></li>
+          <li><a href="/contact.php" class="text-gray-400 hover:text-white">Contact Us</a></li>
           <li><a href="#" class="text-gray-400 hover:text-white">Report Issue</a></li>
         </ul>
       </div>
       <div>
         <h4 class="font-semibold mb-4">Legal</h4>
         <ul class="space-y-2">
-          <li><a href="/app/views/static/about.php" class="text-gray-400 hover:text-white">About Us</a></li>
-          <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-          <li><a href="/app/views/static/legal.php" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+          <li><a href="/about.php" class="text-gray-400 hover:text-white">About Us</a></li>
+          <li><a href="/privacy.php" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+          <li><a href="/legal.php" class="text-gray-400 hover:text-white">Terms of Service</a></li>
         </ul>
       </div>
     </div>

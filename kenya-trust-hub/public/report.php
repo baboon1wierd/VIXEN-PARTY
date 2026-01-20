@@ -4,11 +4,11 @@
 
 <ul>
 
-  <li><a href="/app/views/reports/lost-found.php">Lost & Found</a></li>
+  <li><a href="/lost-found.php">Lost & Found</a></li>
 
-  <li><a href="/app/views/reports/scams.php">Scam Alert</a></li>
+  <li><a href="/scams.php">Scam Alert</a></li>
 
-  <li><a href="/app/views/reports/consumer.php">Consumer Protection</a></li>
+  <li><a href="/consumer.php">Consumer Protection</a></li>
 
 </ul>
 

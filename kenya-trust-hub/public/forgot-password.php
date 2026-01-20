@@ -5,10 +5,9 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
 $authController = new AuthController();
 
-if (isset($_GET['token'])) {
-    $authController->verifyEmail($_GET['token']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $authController->forgotPassword();
 } else {
-    header('Location: /login.php');
-    exit;
+  $authController->showForgotPassword();
 }
 ?>

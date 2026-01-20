@@ -1,0 +1,67 @@
+# ===============================
+# OS / Editor files
+# ===============================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.bak
+.idea/
+.vscode/
+
+# ===============================
+# Environment & secrets
+# ===============================
+.env
+.env.local
+.env.production
+
+# ===============================
+# Dependencies
+# ===============================
+/vendor/
+/node_modules/
+
+# ===============================
+# Logs
+# ===============================
+*.log
+/storage/logs/*
+!/storage/logs/.gitkeep
+
+# ===============================
+# User uploads & evidence
+# ===============================
+/storage/uploads/*
+/storage/evidence/*
+!/storage/uploads/.gitkeep
+!/storage/evidence/.gitkeep
+
+# ===============================
+# Cache & temporary files
+# ===============================
+/cache/
+/tmp/
+
+# ===============================
+# Compiled assets (if added later)
+# ===============================
+/public/assets/css/*.min.css
+/public/assets/js/*.min.js
+
+# ===============================
+# Database dumps
+# ===============================
+*.sql
+*.sqlite
+
+# ===============================
+# Server / hosting files
+# ===============================
+.htpasswd
+php_errors.log
+
+# ===============================
+# PHPUnit / testing
+# ===============================
+.phpunit.result.cache

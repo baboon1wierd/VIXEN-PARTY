@@ -1,6 +1,15 @@
 <?php include '../app/views/partials/header.php'; ?>
 
-<h2>Single Listing</h2>
-<p>Details of a single listing would be shown here.</p>
+<h2>How It Works</h2>
+
+<ol>
+
+  <li>Report</li>
+
+  <li>Review</li>
+
+  <li>Alert</li>
+
+</ol>
 
 <?php include '../app/views/partials/footer.php'; ?>

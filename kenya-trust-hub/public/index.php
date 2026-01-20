@@ -10,7 +10,7 @@
     </p>
     <div class="flex justify-center gap-4">
       <button class="bg-black text-white px-6 py-3 rounded-xl">Search Listings</button>
-      <button class="border border-black px-6 py-3 rounded-xl">Report Incident</button>
+      <a href="/listings.php#report-form" class="border border-black px-6 py-3 rounded-xl inline-block">Report Incident</a>
     </div>
   </section>
 

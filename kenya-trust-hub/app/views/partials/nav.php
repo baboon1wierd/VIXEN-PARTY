@@ -7,7 +7,7 @@
     <a href="/search.php">Search</a>
     <a href="/listings.php">Listings</a>
 
-    <a href="/report.php">
+    <a href="/listings.php#report-form">
       Report
       <span class="badge">Alert</span>
     </a>
