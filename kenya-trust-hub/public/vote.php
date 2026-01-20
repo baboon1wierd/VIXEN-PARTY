@@ -15,6 +15,11 @@ if (!$postId || !$voteType || !$anonId) {
   exit;
 }
 
+if (strpos($postId, 'dummy') === 0) {
+  echo json_encode(['error' => 'Cannot vote on demo posts']);
+  exit;
+}
+
 $secretSalt = 'your_secret_salt_here'; // Change this
 $rotatingSalt = date('Y-m-d'); // Daily rotation
 

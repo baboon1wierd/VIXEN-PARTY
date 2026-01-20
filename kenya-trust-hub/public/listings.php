@@ -14,8 +14,15 @@
         $stmt->execute();
         $listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($listings)) {
-          echo '<p class="text-gray-600">No listings yet. Be the first to submit!</p>';
-        } else {
+          // Dummy posts
+          $dummyListings = [
+            ['id' => 'dummy1', 'title' => 'Lost iPhone 12', 'description' => 'Black iPhone 12 lost in Westlands, Nairobi. Reward offered.', 'location' => 'Westlands, Nairobi', 'status' => 'Lost'],
+            ['id' => 'dummy2', 'title' => 'Found Wallet', 'description' => 'Brown leather wallet found containing ID and cash. Owner please contact.', 'location' => 'CBD, Nairobi', 'status' => 'Found'],
+            ['id' => 'dummy3', 'title' => 'Lost Laptop', 'description' => 'Silver MacBook Pro lost at University of Nairobi. Contains important files.', 'location' => 'University of Nairobi', 'status' => 'Lost']
+          ];
+          $listings = $dummyListings;
+        }
+        foreach ($listings as $listing) {
           foreach ($listings as $listing) {
             $postId = $listing['id'];
             $stmtScore = $pdo->prepare("SELECT
@@ -61,8 +68,14 @@
         $stmt->execute();
         $listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($listings)) {
-          echo '<p class="text-gray-600">No reports yet. Be the first to report!</p>';
-        } else {
+          $dummyListings = [
+            ['id' => 'dummy4', 'title' => 'Fake Electronics Shop', 'description' => 'Shop in River Road selling counterfeit phones. Multiple complaints of faulty products.', 'location' => 'River Road, Nairobi', 'status' => 'Reported'],
+            ['id' => 'dummy5', 'title' => 'Overpriced Groceries', 'description' => 'Supermarket charging 3x normal prices for basic items. Avoid this location.', 'location' => 'Eastlands, Nairobi', 'status' => 'Reported'],
+            ['id' => 'dummy6', 'title' => 'Excellent Service - QuickMart', 'description' => 'Great customer service and fair prices. Highly recommended for daily shopping.', 'location' => 'Karen, Nairobi', 'status' => 'Reported']
+          ];
+          $listings = $dummyListings;
+        }
+        foreach ($listings as $listing) {
           foreach ($listings as $listing) {
             $postId = $listing['id'];
             // Calculate current score
@@ -109,8 +122,14 @@
         $stmt->execute();
         $listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($listings)) {
-          echo '<p class="text-gray-600">No alerts yet. Be the first to report a scam!</p>';
-        } else {
+          $dummyListings = [
+            ['id' => 'dummy7', 'title' => 'Job Scam - Fake Employment Agency', 'description' => 'Agency promising high-paying jobs but requiring upfront fees. Multiple victims reported.', 'location' => 'Online/Email', 'status' => 'Reported'],
+            ['id' => 'dummy8', 'title' => 'Landlord Scam', 'description' => 'Fake landlord advertising non-existent apartments and collecting deposits.', 'location' => 'Westlands, Nairobi', 'status' => 'Reported'],
+            ['id' => 'dummy9', 'title' => 'Online Shopping Fraud', 'description' => 'Website selling electronics but never delivering. Refunds not processed.', 'location' => 'Online', 'status' => 'Reported']
+          ];
+          $listings = $dummyListings;
+        }
+        foreach ($listings as $listing) {
           foreach ($listings as $listing) {
             $postId = $listing['id'];
             $stmtScore = $pdo->prepare("SELECT
