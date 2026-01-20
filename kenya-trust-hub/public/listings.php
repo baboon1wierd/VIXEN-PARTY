@@ -17,11 +17,18 @@
           echo '<p class="text-gray-600">No listings yet. Be the first to submit!</p>';
         } else {
           foreach ($listings as $listing) {
-            echo '<div class="bg-white p-4 rounded-lg shadow-lg mb-4 flex">';
+            $postId = $listing['id'];
+            $stmtScore = $pdo->prepare("SELECT
+              SUM(CASE WHEN vote_type = 'upvote' THEN 1 ELSE 0 END) -
+              SUM(CASE WHEN vote_type = 'downvote' THEN 1 ELSE 0 END) as score
+              FROM post_votes WHERE post_id = ?");
+            $stmtScore->execute([$postId]);
+            $score = $stmtScore->fetch()['score'] ?? 0;
+            echo '<div class="bg-white p-4 rounded-lg shadow-lg mb-4 flex" data-post-id="' . $postId . '">';
             echo '<div class="flex flex-col items-center mr-4">';
-            echo '<button class="upvote-btn text-gray-400 hover:text-orange-500 text-lg" onclick="vote(this, 1)">▲</button>';
-            echo '<span class="vote-count text-sm font-bold">0</span>';
-            echo '<button class="downvote-btn text-gray-400 hover:text-blue-500 text-lg" onclick="vote(this, -1)">▼</button>';
+            echo '<button class="upvote-btn text-gray-400 hover:text-orange-500 text-lg" onclick="vote(this, \'upvote\')">▲</button>';
+            echo '<span class="vote-count text-sm font-bold">' . $score . '</span>';
+            echo '<button class="downvote-btn text-gray-400 hover:text-blue-500 text-lg" onclick="vote(this, \'downvote\')">▼</button>';
             echo '</div>';
             echo '<div class="flex-1">';
             echo '<img src="https://via.placeholder.com/100x60?text=Img" alt="Evidence" class="float-right ml-4 mb-2 w-24 h-16 object-cover rounded">';
@@ -57,11 +64,19 @@
           echo '<p class="text-gray-600">No reports yet. Be the first to report!</p>';
         } else {
           foreach ($listings as $listing) {
-            echo '<div class="bg-white p-4 rounded-lg shadow-lg mb-4 flex">';
+            $postId = $listing['id'];
+            // Calculate current score
+            $stmtScore = $pdo->prepare("SELECT
+              SUM(CASE WHEN vote_type = 'upvote' THEN 1 ELSE 0 END) -
+              SUM(CASE WHEN vote_type = 'downvote' THEN 1 ELSE 0 END) as score
+              FROM post_votes WHERE post_id = ?");
+            $stmtScore->execute([$postId]);
+            $score = $stmtScore->fetch()['score'] ?? 0;
+            echo '<div class="bg-white p-4 rounded-lg shadow-lg mb-4 flex" data-post-id="' . $postId . '">';
             echo '<div class="flex flex-col items-center mr-4">';
-            echo '<button class="upvote-btn text-gray-400 hover:text-orange-500 text-lg" onclick="vote(this, 1)">▲</button>';
-            echo '<span class="vote-count text-sm font-bold">0</span>';
-            echo '<button class="downvote-btn text-gray-400 hover:text-blue-500 text-lg" onclick="vote(this, -1)">▼</button>';
+            echo '<button class="upvote-btn text-gray-400 hover:text-orange-500 text-lg" onclick="vote(this, \'upvote\')">▲</button>';
+            echo '<span class="vote-count text-sm font-bold">' . $score . '</span>';
+            echo '<button class="downvote-btn text-gray-400 hover:text-blue-500 text-lg" onclick="vote(this, \'downvote\')">▼</button>';
             echo '</div>';
             echo '<div class="flex-1">';
             echo '<img src="https://via.placeholder.com/100x60?text=Img" alt="Evidence" class="float-right ml-4 mb-2 w-24 h-16 object-cover rounded">';
@@ -97,11 +112,18 @@
           echo '<p class="text-gray-600">No alerts yet. Be the first to report a scam!</p>';
         } else {
           foreach ($listings as $listing) {
-            echo '<div class="bg-white p-4 rounded-lg shadow-lg mb-4 flex border-l-4 border-red-500">';
+            $postId = $listing['id'];
+            $stmtScore = $pdo->prepare("SELECT
+              SUM(CASE WHEN vote_type = 'upvote' THEN 1 ELSE 0 END) -
+              SUM(CASE WHEN vote_type = 'downvote' THEN 1 ELSE 0 END) as score
+              FROM post_votes WHERE post_id = ?");
+            $stmtScore->execute([$postId]);
+            $score = $stmtScore->fetch()['score'] ?? 0;
+            echo '<div class="bg-white p-4 rounded-lg shadow-lg mb-4 flex border-l-4 border-red-500" data-post-id="' . $postId . '">';
             echo '<div class="flex flex-col items-center mr-4">';
-            echo '<button class="upvote-btn text-gray-400 hover:text-orange-500 text-lg" onclick="vote(this, 1)">▲</button>';
-            echo '<span class="vote-count text-sm font-bold">0</span>';
-            echo '<button class="downvote-btn text-gray-400 hover:text-blue-500 text-lg" onclick="vote(this, -1)">▼</button>';
+            echo '<button class="upvote-btn text-gray-400 hover:text-orange-500 text-lg" onclick="vote(this, \'upvote\')">▲</button>';
+            echo '<span class="vote-count text-sm font-bold">' . $score . '</span>';
+            echo '<button class="downvote-btn text-gray-400 hover:text-blue-500 text-lg" onclick="vote(this, \'downvote\')">▼</button>';
             echo '</div>';
             echo '<div class="flex-1">';
             echo '<img src="https://via.placeholder.com/100x60?text=Img" alt="Evidence" class="float-right ml-4 mb-2 w-24 h-16 object-cover rounded">';
@@ -222,12 +244,33 @@
 </section>
 
 <script>
-function vote(button, delta) {
-  const countSpan = button.querySelector('.vote-count');
-  let count = parseInt(countSpan.textContent);
-  count += delta;
-  countSpan.textContent = count;
-  button.disabled = true; // Prevent multiple votes
+let anonId = localStorage.getItem('anon_id');
+if (!anonId) {
+  anonId = crypto.randomUUID();
+  localStorage.setItem('anon_id', anonId);
+}
+
+function vote(button, voteType) {
+  const postDiv = button.closest('[data-post-id]');
+  const postId = postDiv.getAttribute('data-post-id');
+  const countSpan = postDiv.querySelector('.vote-count');
+
+  fetch('vote.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `post_id=${postId}&vote_type=${voteType}&anon_id=${anonId}`
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      alert(data.error);
+    } else {
+      countSpan.textContent = data.score;
+      button.disabled = true;
+      button.style.opacity = 0.5;
+    }
+  })
+  .catch(error => console.error('Error:', error));
 }
 
 function share(platform, title) {
@@ -279,6 +322,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_report'])) {
     listing_id INTEGER,
     file_path TEXT,
     FOREIGN KEY (listing_id) REFERENCES listings(id)
+  )");
+
+  $pdo->exec("CREATE TABLE IF NOT EXISTS post_votes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    post_id INTEGER,
+    vote_type TEXT,
+    anon_hash TEXT,
+    ip_hash TEXT,
+    ua_hash TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES listings(id)
   )");
 
   $user_id = $_SESSION['user']['id'] ?? null;
