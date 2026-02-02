@@ -1,6 +1,24 @@
-# Kenya Trust & Alert Hub 🇰🇪
+# VIXEN-PARTY Repository
+
+This repository contains multiple projects focused on education and community support.
+
+## Projects
+
+### 1. Kenya Trust & Alert Hub 🇰🇪
 
 A community-powered platform for **Lost & Found**, **Scam Alerts**, and **Consumer Protection** in Kenya.
+
+[View Kenya Trust Hub →](./kenya-trust-hub/)
+
+### 2. Tutor-Allied AI Academy 🎓
+
+An AI-powered educational platform with personalized tutoring and adaptive learning experiences.
+
+[View AI Academy →](./tutor-allied-ai-academy/)
+
+---
+
+## Kenya Trust & Alert Hub
 
 This project helps Kenyans report, discover, and stay informed about:
 - Lost and recovered items
